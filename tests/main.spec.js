@@ -7,9 +7,21 @@ sinonStubPromise(sinon);
 
 global.fetch = require('node-fetch')
 
-import { search , searchAlbuns, searchArtists, searchTracks, searchPlaylists } from '../src/main';
+import { search , searchAlbums, searchArtists, searchTracks, searchPlaylists } from '../src/main';
 
 describe('Spotify Wrapper', () => {
+  let fetchedStub;
+  let promise;
+
+  beforeEach( () => {
+    fetchedStub = sinon.stub(global, 'fetch');
+    promise = fetchedStub.returnsPromise();
+  });
+
+  afterEach( () => {
+    fetchedStub.restore();
+  });
+
 
   describe('Smoke Tests', ()=>{
 
@@ -23,8 +35,8 @@ describe('Spotify Wrapper', () => {
       expect(search).to.exist;
     });
 
-    it('should exist the searchAlbuns method', ()=>{
-      expect(searchAlbuns).to.exist;
+    it('should exist the searchAlbums method', ()=>{
+      expect(searchAlbums).to.exist;
     });
 
     it('should exist the searchArtists method', ()=>{
@@ -40,18 +52,9 @@ describe('Spotify Wrapper', () => {
     });
   });
 
+
   describe('Generic Search', ()=>{
-    let fetchedStub;
-    let promise;
 
-    beforeEach( () => {
-      fetchedStub = sinon.stub(global, 'fetch');
-      promise = fetchedStub.returnsPromise();
-    });
-
-    afterEach( () => {
-      fetchedStub.restore();
-    });
 
     it('should call fetch function', ()=> {
       const artists = search();
@@ -84,6 +87,63 @@ describe('Spotify Wrapper', () => {
 
       expect(artists.resolveValue).to.be.eql({ body: 'json' }); //Deeply equal = eql !== equal;
     });
+  });
 
-  }); // Generic Search
+
+  describe('searchArtists', () => {
+    it('should call the fetch function', () => {
+      const artists = searchArtists('Slipknot');
+      expect(fetchedStub).to.have.been.calledOnce;
+    });
+
+    it('should call fetch with the correct URL', () => {
+      const artists = searchArtists('Slipknot');
+      expect(fetchedStub).to.been
+        .calledWith('https://api.spotify.com/v1/search?q=Slipknot&type=artist');
+
+      const artists2 = searchArtists('Muse');
+      expect(fetchedStub).to.been
+        .calledWith('https://api.spotify.com/v1/search?q=Muse&type=artist');
+    });
+  });
+
+  describe('searchAlbums', () => {
+    it('should call the fetch function', () => {
+      const albums = searchAlbums('Slipknot');
+      expect(fetchedStub).to.have.been.calledOnce;
+    });
+
+    it('should to call fetch with the correct URL', () => {
+      const albums = searchAlbums('Slipknot');
+      expect(fetchedStub).to.have.been
+        .calledWith('https://api.spotify.com/v1/search?q=Slipknot&type=album');
+    });
+  });
+
+  describe('searchTracks', () => {
+    it('should call the fetch function', () => {
+      const tracks = searchTracks('Slipknot');
+      expect(fetchedStub).to.have.been.calledOnce;
+    });
+
+    it('should to call fetch with the correct URL', () => {
+      const tracks = searchTracks('Slipknot');
+      expect(fetchedStub).to.have.been
+        .calledWith('https://api.spotify.com/v1/search?q=Slipknot&type=tracks');
+    });
+  });
+
+  describe('searchPlaylists', () => {
+    it('should call the fetch function', () => {
+      const playlists = searchPlaylists('Slipknot');
+      expect(fetchedStub).to.have.been.calledOnce;
+    });
+
+    it('should to call fetch with the correct URL', () => {
+      const playlists = searchPlaylists('Slipknot');
+      expect(fetchedStub).to.have.been
+        .calledWith('https://api.spotify.com/v1/search?q=Slipknot&type=playlist');
+    });
+  });
+
 });
