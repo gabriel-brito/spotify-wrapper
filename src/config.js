@@ -8,7 +8,7 @@ const HEADERS = {
   },
 };
 
-module.exports = {
+export {
   API_URL,
-  HEADERS
-}
+  HEADERS,
+};
