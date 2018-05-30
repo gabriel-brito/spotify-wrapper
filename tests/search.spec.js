@@ -82,10 +82,10 @@ describe('Search', () => {
     }); // Correct URL
 
     it('should return the JSON data from the Promise', () => {
-      promise.resolves({ body: 'json' });
+      promise.resolves({body: 'json' });
       const artists = search('Incubus', 'artist');
 
-      expect(artists.resolveValue).to.be.eql({ body: 'json' }); //Deeply equal = eql !== equal;
+      expect(artists.resolveValue).to.be.eql({body: 'json' }); //Deeply equal = eql !== equal;
     });
   });
 
